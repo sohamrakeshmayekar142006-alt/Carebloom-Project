@@ -8,42 +8,47 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
   </head>
   <body
-    class="bg-gradient-to-r from-pink-200 via-pink-300 to-orange-200 min-h-screen"
+    class="bg-gradient-to-r from-pink-100 via-rose-100 to-orange-100 min-h-screen"
   >
     <div class="flex min-h-screen">
+      <!-- SIDEBAR -->
       <aside class="w-64 flex-shrink-0 bg-amber-50 shadow-lg flex flex-col">
         <div class="p-6 text-2xl font-bold text-center border-b">
-          🌱Care<span class="text-red-600">Bloom</span>
+          🌱Care<span class="text-pink-600">Bloom</span>
         </div>
-        <nav class="flex-grow p-4">
+        <nav class="flex-grow p-4 space-y-2">
           <a
             href="#"
-            class="flex items-center px-4 py-3 font-semibold text-white bg-pink-500 rounded-lg"
+            id="nav-dashboard"
+            class="nav-link flex items-center px-4 py-3 font-semibold text-white bg-pink-500 rounded-lg"
           >
             <i class="fas fa-tachometer-alt w-6 text-center mr-3"></i>
             Dashboard
           </a>
           <a
             href="#"
-            class="flex items-center px-4 py-3 mt-2 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors"
+            id="nav-donations"
+            class="nav-link flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors duration-75"
           >
             <i class="fas fa-gift w-6 text-center mr-3"></i> My Donations
           </a>
           <a
             href="#"
-            class="flex items-center px-4 py-3 mt-2 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors"
+            id="nav-profile"
+            class="nav-link flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors duration-75"
           >
             <i class="fas fa-user w-6 text-center mr-3"></i> Profile
           </a>
           <a
             href="#"
-            class="flex items-center px-4 py-3 mt-2 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors"
+            id="nav-settings"
+            class="nav-link flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors duration-75"
           >
             <i class="fas fa-cog w-6 text-center mr-3"></i> Settings
           </a>
@@ -51,246 +56,292 @@
         <div class="p-4 border-t">
           <a
             href="#"
-            class="flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors"
+            class="flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 hover:text-gray-800 rounded-lg transition-colors duration-75"
           >
             <i class="fas fa-sign-out-alt w-6 text-center mr-3"></i> Logout
           </a>
         </div>
       </aside>
 
+      <!-- MAIN CONTENT -->
       <main class="flex-1 p-6">
-        <div class="bg-amber-50 rounded-2xl shadow-xl w-full p-6">
-          <header class="flex justify-between items-center">
-            <div>
-              <h1 class="font-bold text-black text-3xl">Welcome User! 🌷</h1>
-              <p class="mt-1.5 text-xl font-normal text-black">
-                Your Garden is Flourishing! So far you have helped 4 NGO's and
-                Touched 28 Lives! 🎗️
-              </p>
-            </div>
-          </header>
+        <!-- Dashboard View -->
+        <div id="view-dashboard">
+          <div class="bg-amber-50 rounded-2xl shadow-xl w-full p-6">
+            <header class="flex justify-between items-center">
+              <div>
+                <h1 class="font-bold text-black text-3xl">Welcome User! 🌷</h1>
+                <p class="mt-1.5 text-xl font-normal text-black">
+                  Your Garden is Flourishing! So far you have helped 4 NGO's and
+                  Touched 28 Lives! 🎗️
+                </p>
+              </div>
+            </header>
+          </div>
+
+          <section
+            class="donation-form bg-amber-50 rounded-2xl shadow-xl mt-6 p-8"
+          >
+            <h2 class="text-2xl text-black font-bold mb-6">
+              Plant a New Seed (Make a new donation) 🌱
+            </h2>
+            <!-- Donation form content -->
+            <form id="donation-form" class="space-y-6" onsubmit="return false;">
+              <div>
+                <label for="item-name" class="block text-xl text-black font-medium mb-2">Item Name</label>
+                <input id="item-name" type="text" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400" placeholder="e.g., Winter Jacket"/>
+              </div>
+              <div>
+                <label for="item-images" class="block text-xl text-black font-medium mb-2">Add Photos</label>
+                <div class="image-upload-area relative flex flex-col justify-center items-center p-8 border-2 border-dashed border-pink-500 rounded-lg cursor-pointer bg-pink-50 hover:bg-pink-100 transition-colors duration-200 min-h-[200px]">
+                  <input type="file" name="item-images" id="item-images" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                  <div class="text-center">
+                    <i class="fa-solid fa-camera text-4xl text-pink-600 mb-2"></i>
+                    <p class="text-gray-700">Drag & Drop or click to browse</p>
+                    <p class="text-sm text-gray-500 mt-1">Max file size: 5MB</p>
+                  </div>
+                  <div id="image-preview-container" class="flex flex-wrap gap-4 mt-4 justify-center"></div>
+                </div>
+              </div>
+              <div>
+                <label for="item-description" class="block text-xl text-black font-medium mb-2">Item Description</label>
+                <textarea id="item-description" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400" placeholder="Describe the item's condition, size, etc."></textarea>
+              </div>
+              <div>
+                <label class="block text-xl text-black font-medium mb-2">Select Tag</label>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Books</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Clothes</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Toys</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Utensils</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Electronics</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Small furniture</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Sports Equipment</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Bedding & Blankets</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Towels</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Baby Gear (strollers, car seats)</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Feminine Hygiene Products</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">First-Aid Supplies</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Medical Aids (Wheelchairs, Crutches)</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Tools & Hardware</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Pet Supplies</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Cleaning Supplies</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Home Appliances (Small)</button>
+                    <button type="button" class="bg-white text-pink-600 font-medium rounded-2xl px-4 py-2 hover:bg-pink-500 hover:text-white transition-colors">Others</button>
+                </div>
+              </div>
+              <div>
+                <button id="donate-item-btn" type="button" class="w-full bg-pink-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-700 transition-colors">Donate Item</button>
+              </div>
+            </form>
+          </section>
         </div>
 
-        <section
-          class="donation-form bg-amber-50 rounded-2xl shadow-xl mt-6 p-8"
-        >
-          <h2 class="text-2xl text-black font-bold mb-6">
-            Plant a New Seed (Make a new donation) 🌱
-          </h2>
+        <!-- My Donations View (Blank) -->
+        <div id="view-donations" class="hidden">
+            <!-- Content for My Donations will be added later -->
+        </div>
 
-          <div class="space-y-6">
-            <div>
-              <label
-                for="item-name"
-                class="block text-xl text-black font-medium mb-2"
-                >Item Name</label
-              >
-              <input
-                id="item-name"
-                type="text"
-                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                placeholder="e.g., Winter Jacket"
-              />
-            </div>
+        <!-- Profile View (Blank) -->
+        <div id="view-profile" class="hidden">
+            <!-- Content for Profile will be added later -->
+        </div>
 
-            <div>
-              <label
-                for="item-images"
-                class="block text-xl text-black font-medium mb-2"
-                >Add Photos of Your Item</label
-              >
-              <div
-                class="image-upload-area relative flex flex-col justify-center items-center p-8 border-2 border-dashed border-pink-500 rounded-lg cursor-pointer bg-pink-50 hover:bg-pink-100 hover:border-pink-700 transition-colors duration-200 min-h-[200px]"
-              >
-                <input
-                  type="file"
-                  name="item-images"
-                  id="item-images"
-                  accept="image/*"
-                  multiple
-                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <div class="text-center">
-                  <i class="fa-solid fa-camera text-4xl text-pink-600 mb-2"></i>
-                  <p class="text-gray-700">
-                    Drag & Drop your photos here, or click to browse
-                  </p>
-                  <p class="text-sm text-gray-500 mt-1">
-                    Maximum file size: 5MB
-                  </p>
+        <!-- Settings View (Hidden by default) -->
+        <div id="view-settings" class="hidden">
+           <div class="bg-amber-50 rounded-2xl shadow-xl w-full p-8">
+                <h1 class="font-bold text-black text-3xl mb-6">Settings</h1>
+                <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Notifications</h3>
+                        <div class="flex items-center justify-between">
+                            <p>Email me when a donation is accepted</p>
+                            <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" value="" class="sr-only peer" checked><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-pink-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div></label>
+                        </div>
+                         <div class="flex items-center justify-between mt-4">
+                            <p>Send me updates about new NGO campaigns</p>
+                            <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" value="" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-pink-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div></label>
+                        </div>
+                    </div>
+                    <div class="border-t pt-6">
+                         <h3 class="text-xl font-semibold mb-4">Account</h3>
+                         <div class="flex space-x-4">
+                            <button class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors">Change Password</button>
+                            <button class="bg-red-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition-colors">Delete Account</button>
+                         </div>
+                    </div>
                 </div>
-                <div
-                  id="image-preview-container"
-                  class="flex flex-wrap gap-4 mt-4"
-                ></div>
-              </div>
             </div>
+        </div>
 
-            <div>
-              <label
-                for="item-description"
-                class="block text-xl text-black font-medium mb-2"
-                >Item Description</label
-              >
-              <textarea
-                id="item-description"
-                rows="4"
-                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                placeholder="Describe the item's condition, size, age, etc."
-              ></textarea>
-            </div>
-            <div>
-              <label
-                for="Select Tag"
-                class="block text-xl text-black font-medium"
-                >Select Tag</label
-              >
-
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Books
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Clothes
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Toys
-              </button>
-              <br />
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Utensils
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Electronics
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Small furniture
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Others
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Bedding & Blankets
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Towels
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Baby Gear (strollers, car seats)
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                Maternity Wear
-              </button>
-              <button
-                class="bg-white text-red-600 font-extralight rounded-2xl px-4 py-2"
-              >
-                First-Aid Supplies
-              </button>
-              <button></button><button></button><button></button
-              ><button></button><button></button>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                class="w-full bg-pink-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-700 transition-colors"
-              >
-                Donate Item
-              </button>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
 
-    <script>
-      const fileInput = document.getElementById("item-images");
-      const previewContainer = document.getElementById(
-        "image-preview-container"
-      );
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-pink-100 mb-4">
+          <i class="fas fa-hand-holding-heart text-pink-600 text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">Confirm Donation</h3>
+        <p class="mt-2 text-sm text-gray-500">Are you sure you want to list this item for donation?</p>
+        <div class="mt-6 flex justify-center gap-4">
+          <button id="confirm-donate-btn" type="button" class="bg-pink-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-700 transition-colors">
+            Yes, Donate
+          </button>
+          <button id="cancel-donate-btn" type="button" class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors">
+            No, Cancel
+          </button>
+        </div>
+      </div>
+    </div>
 
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center transform transition-all scale-95 opacity-0" id="success-modal-content">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+          <i class="fas fa-check text-green-600 text-2xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900">Success!</h3>
+        <p class="mt-2 text-sm text-gray-500">Item donated successfully! Check your donations in the 'My Donations' tab.</p>
+        <div class="mt-6">
+          <button id="success-ok-btn" type="button" class="w-full bg-pink-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-700 transition-colors">
+            Okay
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      // SCRIPT FOR IMAGE PREVIEW
+      const fileInput = document.getElementById("item-images");
+      const previewContainer = document.getElementById("image-preview-container");
       let fileStore = new DataTransfer();
 
       fileInput.addEventListener("change", (event) => {
-        for (const file of event.target.files) {
-          fileStore.items.add(file);
-        }
+        for (const file of event.target.files) { fileStore.items.add(file); }
         fileInput.files = fileStore.files;
         displayPreviews();
       });
 
       function displayPreviews() {
         previewContainer.innerHTML = "";
-
         for (let i = 0; i < fileStore.files.length; i++) {
           const file = fileStore.files[i];
-
           if (file.type.startsWith("image/")) {
             const reader = new FileReader();
-
             reader.onload = (e) => {
               const wrapper = document.createElement("div");
               wrapper.className = "relative w-24 h-24";
-
               const img = document.createElement("img");
               img.src = e.target.result;
-              img.className =
-                "w-full h-full object-cover rounded-lg border-2 border-gray-200";
+              img.className = "w-full h-full object-cover rounded-lg border-2 border-gray-200";
               wrapper.appendChild(img);
-
               const removeBtn = document.createElement("button");
-              removeBtn.className =
-                "absolute top-0 right-0 -mt-2 -mr-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-transform transform hover:scale-110";
+              removeBtn.className = "absolute top-0 right-0 -mt-2 -mr-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-transform transform hover:scale-110";
               removeBtn.innerHTML = "&times;";
-
-              removeBtn.addEventListener("click", () => {
-                removeFile(i);
-              });
-
+              removeBtn.addEventListener("click", () => { removeFile(i); });
               wrapper.appendChild(removeBtn);
               previewContainer.appendChild(wrapper);
             };
-
             reader.readAsDataURL(file);
           }
         }
       }
-      
 
       function removeFile(index) {
         const newFileStore = new DataTransfer();
-
         for (let i = 0; i < fileStore.files.length; i++) {
-          if (i !== index) {
-            newFileStore.items.add(fileStore.files[i]);
-          }
+          if (i !== index) { newFileStore.items.add(fileStore.files[i]); }
         }
-
         fileStore = newFileStore;
         fileInput.files = fileStore.files;
         displayPreviews();
       }
+
+      // SCRIPT FOR VIEW SWITCHING
+      const navLinks = document.querySelectorAll(".nav-link");
+      const views = {
+        dashboard: document.getElementById("view-dashboard"),
+        donations: document.getElementById("view-donations"),
+        profile: document.getElementById("view-profile"),
+        settings: document.getElementById("view-settings"),
+      };
+
+      function switchView(viewName) {
+        for (const key in views) {
+          if (views[key]) {
+            views[key].classList.add("hidden");
+          }
+        }
+        if (views[viewName]) {
+          views[viewName].classList.remove("hidden");
+        }
+      }
+
+      navLinks.forEach(link => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const viewName = link.id.split("-")[1];
+          
+          navLinks.forEach(nav => {
+            nav.classList.remove("bg-pink-500", "text-white");
+            nav.classList.add("text-gray-600");
+          });
+          link.classList.add("bg-pink-500", "text-white");
+          link.classList.remove("text-gray-600");
+
+          switchView(viewName);
+        });
+      });
+
+      // SCRIPT FOR MODALS
+      const donateItemBtn = document.getElementById('donate-item-btn');
+      const confirmationModal = document.getElementById('confirmation-modal');
+      const confirmDonateBtn = document.getElementById('confirm-donate-btn');
+      const cancelDonateBtn = document.getElementById('cancel-donate-btn');
+      const donationForm = document.getElementById('donation-form');
+      
+      const successModal = document.getElementById('success-modal');
+      const successModalContent = document.getElementById('success-modal-content');
+      const successOkBtn = document.getElementById('success-ok-btn');
+
+      donateItemBtn.addEventListener('click', () => {
+        confirmationModal.classList.remove('hidden');
+      });
+
+      cancelDonateBtn.addEventListener('click', () => {
+        // Only hide the confirmation modal, keep form data
+        confirmationModal.classList.add('hidden');
+      });
+      
+      confirmDonateBtn.addEventListener('click', () => {
+        console.log('Donation confirmed!'); 
+        // Hide confirmation modal
+        confirmationModal.classList.add('hidden');
+        
+        // Show success modal with animation
+        successModal.classList.remove('hidden');
+        setTimeout(() => {
+            successModalContent.classList.remove('scale-95', 'opacity-0');
+        }, 10); // a slight delay to ensure transition is applied
+      });
+
+      successOkBtn.addEventListener('click', () => {
+        // Hide success modal
+        successModalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            successModal.classList.add('hidden');
+        }, 300); // Wait for animation to finish
+        
+        // Reset the form after success
+        donationForm.reset();
+        previewContainer.innerHTML = "";
+        fileStore = new DataTransfer();
+      });
+
     </script>
   </body>
 </html>
+

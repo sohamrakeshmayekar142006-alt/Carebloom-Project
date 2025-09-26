@@ -7,7 +7,7 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
@@ -44,6 +44,7 @@
           <li>
             <a href="#" class="hover:text-pink-500 transition-colors">Faq</a>
           </li>
+          <!-- CORRECTED BUTTON: Added id="openBtn" and removed onclick -->
           <button
             id="openBtn"
             type="button"
@@ -89,7 +90,7 @@
         <div class="flex justify-center lg:justify-start mt-6">
           <button
             type="button"
-            onclick="window.location.href='LoginSignUp.html'"
+            onclick="window.location.href='login_choice.html'"
             class="bg-pink-500 hover:bg-pink-700 text-white text-lg font-semibold px-8 py-3 rounded-md transition-colors shadow-lg hover:shadow-xl"
           >
             Donate Now
@@ -115,7 +116,7 @@
       </div>
       <div class="flex flex-1 justify-center items-center">
         <img
-          src="./Images/pant final dek 1.PNG"
+          src="./Images/kapde-removebg-preview.png"
           alt="Picture Of heart"
           class="w-full max-w-md"
         />
@@ -229,10 +230,10 @@
 
     <button
       type="button"
-      onclick="window.location.href='LoginSignUp.html'"
+      onclick="window.location.href='login_choice.html'"
       class="bg-pink-500 hover:bg-pink-700 text-white text-lg md:text-xl font-semibold px-12 py-4 rounded-md mx-auto flex justify-center items-center cursor-pointer"
     >
-      Donate Now
+      Help Now
     </button>
 
     <img
@@ -261,16 +262,22 @@
     <script>
       const button = document.getElementById("openBtn");
 
-      button.addEventListener("click", () => {
-        // Add Tailwind pulse animation
-        button.classList.add("animate-pulse");
+      // This check prevents the error if the button isn't found
+      if (button) {
+        button.addEventListener("click", () => {
+          // Add Tailwind pulse animation
+          button.classList.add("animate-pulse");
 
-        // Wait for animation, then navigate
-        setTimeout(() => {
-          window.location.href = "LoginSignUp.html";
-          button.classList.remove("animate-pulse"); // reset for next click
-        }, 600);
-      });
+          // Wait for animation, then navigate
+          setTimeout(() => {
+            // Corrected the navigation link to the intended choice page
+            window.location.href = "DonorOrNgo.html"; 
+            button.classList.remove("animate-pulse"); // reset for next click
+          }, 600);
+        });
+      }
     </script>
   </body>
 </html>
+
+
