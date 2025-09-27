@@ -1,11 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NGO Dashboard - CareBloom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
-<body>
-    
+<body class="bg-gradient-to-r from-pink-100 via-rose-100 to-orange-100">
+    <div class="flex min-h-screen">
+        <!-- SIDEBAR -->
+        <aside class="w-64 flex-shrink-0 bg-amber-50 shadow-lg flex flex-col">
+            <div class="p-6 text-2xl font-bold text-center border-b">🌱Care<span class="text-pink-600">Bloom</span></div>
+            <nav class="flex-grow p-4 space-y-2">
+                <a href="#" id="nav-browse" class="nav-link flex items-center px-4 py-3 font-semibold text-white bg-pink-500 rounded-lg">
+                    <i class="fas fa-search w-6 text-center mr-3"></i>Browse Donations
+                </a>
+                <a href="#" id="nav-requests" class="nav-link flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 rounded-lg">
+                    <i class="fas fa-tasks w-6 text-center mr-3"></i>My Requests
+                </a>
+                 <a href="#" id="nav-profile" class="nav-link flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 rounded-lg">
+                    <i class="fas fa-user-shield w-6 text-center mr-3"></i>Profile
+                </a>
+            </nav>
+            <div class="p-4 border-t">
+                <a href="#" id="nav-logout" class="flex items-center px-4 py-3 text-gray-600 hover:bg-pink-100 rounded-lg">
+                    <i class="fas fa-sign-out-alt w-6 text-center mr-3"></i>Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 p-6">
+            <!-- Browse Donations View -->
+            <div id="view-browse">
+                <div class="bg-amber-50 rounded-2xl shadow-xl w-full p-6 mb-6">
+                    <h1 class="font-bold text-black text-3xl">Welcome, <span id="ngo-name-header">NGO</span>!</h1>
+                    <p class="mt-1.5 text-xl font-normal text-black">Browse available items from generous donors in your area.</p>
+                </div>
+                <div id="donations-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Donation cards will be injected here by JavaScript -->
+                    <p id="no-donations-message" class="col-span-full text-center text-gray-600 text-lg">No available donations at the moment. Please check back later!</p>
+                </div>
+            </div>
+
+            <!-- My Requests View -->
+            <div id="view-requests" class="hidden">
+                <div class="bg-amber-50 rounded-2xl shadow-xl w-full p-6 mb-6">
+                    <h1 class="font-bold text-black text-3xl">My Requests Tracker</h1>
+                    <p class="mt-1.5 text-xl font-normal text-black">Track the status of items you have requested.</p>
+                </div>
+                <div id="requests-grid" class="space-y-6">
+                    <!-- Requested item cards will be injected here -->
+                     <p id="no-requests-message" class="col-span-full text-center text-gray-600 text-lg">You haven't requested any items yet.</p>
+                </div>
+            </div>
+            
+             <!-- Profile View -->
+            <div id="view-profile" class="hidden">
+                <div class="bg-amber-50 rounded-2xl shadow-xl w-full p-8">
+                    <h1 class="font-bold text-black text-3xl mb-6">Organization Profile 🛡️</h1>
+                     <p>Profile editing form can go here.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md text-center">
+            <h3 class="text-xl font-bold mb-4" id="modal-title">Confirm Request</h3>
+            <p class="text-gray-600 mb-6" id="modal-text">Are you sure you want to request this item?</p>
+            <div class="flex justify-center gap-4">
+                <button id="modal-cancel-btn" class="px-6 py-2 bg-gray-200 rounded-lg font-semibold">Cancel</button>
+                <button id="modal-confirm-btn" class="px-6 py-2 bg-pink-600 text-white rounded-lg font-semibold">Yes, Request</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const supabaseUrl = "https://hrlqhglfzgnoqpaueacb.supabase.co";
+            const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhybHFoZ2xmemdub3FwYXVlYWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4MjEzOTMsImV4cCI6MjA3NDM5NzM5M30.q_ukDX8J-cAZoCZhGnLMas8_eZmsXtFN0STRoEyxGsA";
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            let currentUser = null;
+            let currentNgoProfile = null;
+
+            // --- UI ELEMENTS ---
+            const views = {
+                browse: document.getElementById("view-browse"),
+                requests: document.getElementById("view-requests"),
+                profile: document.getElementById("view-profile"),
+            };
+            const donationsGrid = document.getElementById('donations-grid');
+            const requestsGrid = document.getElementById('requests-grid');
+            const noDonationsMessage = document.getElementById('no-donations-message');
+            const noRequestsMessage = document.getElementById('no-requests-message');
+            const ngoNameHeader = document.getElementById('ngo-name-header');
+            const modal = document.getElementById('confirmation-modal');
+
+            // --- AUTH & INITIAL LOAD ---
+            const initializeDashboard = async () => {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) {
+                    window.location.href = "LoginSignUp.html";
+                    return;
+                }
+                currentUser = user;
+                
+                // Fetch NGO Profile
+                const { data, error } = await supabase.from('ngo_profiles').select('*').eq('id', currentUser.id).single();
+                if (error || !data) {
+                    console.error("Could not fetch NGO profile:", error);
+                    return;
+                }
+                currentNgoProfile = data;
+                ngoNameHeader.textContent = currentNgoProfile.ngo_name;
+                
+                // Initial data load
+                fetchAvailableDonations();
+                setupRealtimeListener();
+            };
+
+            // --- REAL-TIME LISTENER ---
+            const setupRealtimeListener = () => {
+                const channel = supabase.channel('public:donations')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'donations' }, payload => {
+                        console.log('Change received!', payload);
+                        // If the change is relevant to this NGO, refresh the views
+                        const changedRecord = payload.new;
+                        if (
+                            changedRecord.requesting_ngo_id === currentUser.id || // A request they made was updated
+                            payload.eventType === 'INSERT' && changedRecord.status === 'available' // A new item was donated
+                        ) {
+                            fetchAvailableDonations();
+                            fetchMyRequests();
+                        }
+                    })
+                    .subscribe();
+            };
+
+            // --- DATA FETCHING & RENDERING ---
+            const fetchAvailableDonations = async () => {
+                const { data, error } = await supabase
+                    .from('donations')
+                    .select('*')
+                    .eq('status', 'available')
+                    .order('created_at', { ascending: false });
+
+                donationsGrid.innerHTML = ''; // Clear grid
+                if (error || data.length === 0) {
+                    donationsGrid.appendChild(noDonationsMessage);
+                    return;
+                }
+                
+                data.forEach(donation => {
+                    const card = createDonationCard(donation);
+                    donationsGrid.appendChild(card);
+                });
+            };
+
+            const fetchMyRequests = async () => {
+                if (!currentUser) return;
+                const { data, error } = await supabase
+                    .from('donations')
+                    .select(`
+                        *,
+                        donor_profiles (
+                            first_name,
+                            last_name,
+                            phone_number,
+                            address
+                        )
+                    `)
+                    .eq('requesting_ngo_id', currentUser.id)
+                    .in('status', ['requested', 'accepted', 'collected'])
+                    .order('created_at', { ascending: false });
+
+                requestsGrid.innerHTML = '';
+                if(error || data.length === 0) {
+                    console.error('Error fetching requests:', error);
+                    requestsGrid.appendChild(noRequestsMessage);
+                    return;
+                }
+
+                data.forEach(request => {
+                    const card = createRequestCard(request);
+                    requestsGrid.appendChild(card);
+                });
+            };
+
+            // --- CARD CREATION ---
+            const createDonationCard = (donation) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-lg flex flex-col overflow-hidden transform hover:-translate-y-2 transition-transform duration-300';
+                const imageUrl = donation.item_image_url ? donation.item_image_url.split(',')[0] : 'https://placehold.co/400x300/FFC0CB/333333?text=No+Image';
+                
+                card.innerHTML = `
+                    <img src="${imageUrl}" class="w-full h-48 object-cover">
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold text-gray-800">${donation.item_name}</h3>
+                        <p class="text-sm text-gray-500 mt-1">Quantity: ${donation.quantity_required}</p>
+                        <p class="text-gray-600 mt-2 flex-grow">${donation.description}</p>
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                             <button data-donation-id="${donation.id}" class="request-btn w-full bg-pink-600 text-white font-bold py-2 rounded-lg hover:bg-pink-700">Request Item</button>
+                        </div>
+                    </div>
+                `;
+                card.querySelector('.request-btn').addEventListener('click', () => handleRequestItem(donation.id));
+                return card;
+            };
+
+             const createRequestCard = (request) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-lg p-5 flex flex-col md:flex-row md:items-center gap-5';
+                const imageUrl = request.item_image_url ? request.item_image_url.split(',')[0] : 'https://placehold.co/400x300';
+                
+                let statusHtml = '';
+                let detailsHtml = '';
+
+                switch(request.status) {
+                    case 'requested':
+                        statusHtml = `<div class="bg-yellow-100 text-yellow-800 font-bold p-4 rounded-lg text-center">
+                                        <i class="fas fa-hourglass-half mr-2"></i>PENDING DONOR APPROVAL
+                                      </div>`;
+                        break;
+                    case 'accepted':
+                        const donor = request.donor_profiles;
+                        statusHtml = `<div class="bg-green-100 text-green-800 font-bold p-4 rounded-lg text-center">
+                                        <i class="fas fa-check-circle mr-2"></i>REQUEST ACCEPTED
+                                      </div>`;
+                        detailsHtml = `<div class="mt-4 p-4 bg-gray-50 rounded-lg border">
+                                        <h4 class="font-bold">Pickup Details:</h4>
+                                        <p><i class="fas fa-user mr-2"></i> ${donor.first_name} ${donor.last_name}</p>
+                                        <p><i class="fas fa-phone mr-2"></i> ${donor.phone_number}</p>
+                                        <p><i class="fas fa-map-marker-alt mr-2"></i> ${donor.address}</p>
+                                        <button data-donation-id="${request.id}" class="collect-btn w-full mt-4 bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700">Mark as Collected</button>
+                                       </div>`;
+                        break;
+                    case 'collected':
+                         statusHtml = `<div class="bg-blue-100 text-blue-800 font-bold p-4 rounded-lg text-center">
+                                        <i class="fas fa-box-check mr-2"></i>ITEM COLLECTED
+                                        <p class="text-sm font-normal">Thank you for your work!</p>
+                                      </div>`;
+                        break;
+                }
+
+                card.innerHTML = `
+                    <img src="${imageUrl}" class="w-full md:w-32 h-32 object-cover rounded-lg">
+                    <div class="flex-grow">
+                        <h3 class="text-2xl font-bold">${request.item_name}</h3>
+                        <p class="text-gray-500">Quantity: ${request.quantity_required}</p>
+                        ${statusHtml}
+                        ${detailsHtml}
+                    </div>
+                `;
+                 if (request.status === 'accepted') {
+                    card.querySelector('.collect-btn').addEventListener('click', () => handleMarkAsCollected(request.id));
+                }
+                return card;
+            };
+
+            // --- EVENT HANDLERS & ACTIONS ---
+            const handleRequestItem = async (donationId) => {
+                showModal('Confirm Request', 'Are you sure you want to request this item? The donor will be notified.', async () => {
+                    const { error } = await supabase
+                        .from('donations')
+                        .update({ status: 'requested', requesting_ngo_id: currentUser.id })
+                        .eq('id', donationId);
+                    
+                    if (error) {
+                        alert('Error requesting item: ' + error.message);
+                    } else {
+                        alert('Request sent successfully!');
+                        fetchAvailableDonations(); // Refresh the list
+                    }
+                });
+            };
+            
+            const handleMarkAsCollected = async (donationId) => {
+                showModal('Confirm Collection', 'This will notify the donor that the item has been received. This action cannot be undone.', async () => {
+                     const { error } = await supabase
+                        .from('donations')
+                        .update({ status: 'collected' })
+                        .eq('id', donationId);
+
+                     if (error) {
+                        alert('Error updating status: ' + error.message);
+                    } else {
+                        alert('Item marked as collected!');
+                        fetchMyRequests(); // Refresh the requests list
+                    }
+                });
+            };
+
+            // --- MODAL HELPER ---
+            const showModal = (title, text, onConfirm) => {
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-text').textContent = text;
+                modal.classList.remove('hidden');
+
+                const confirmBtn = document.getElementById('modal-confirm-btn');
+                const cancelBtn = document.getElementById('modal-cancel-btn');
+
+                const confirmHandler = () => {
+                    onConfirm();
+                    hideModal();
+                };
+                
+                const hideModal = () => {
+                    modal.classList.add('hidden');
+                    confirmBtn.removeEventListener('click', confirmHandler);
+                    cancelBtn.removeEventListener('click', hideModal);
+                };
+                
+                confirmBtn.addEventListener('click', confirmHandler, { once: true });
+                cancelBtn.addEventListener('click', hideModal, { once: true });
+            };
+
+
+            // --- NAVIGATION ---
+            document.querySelectorAll(".nav-link").forEach(link => {
+                link.addEventListener("click", e => {
+                    e.preventDefault();
+                    const viewId = e.currentTarget.id.split("-")[1];
+                    document.querySelectorAll(".nav-link").forEach(nav => nav.classList.remove("bg-pink-500", "text-white"));
+                    e.currentTarget.classList.add("bg-pink-500", "text-white");
+                    
+                    for (const key in views) { views[key].classList.add("hidden"); }
+                    if(views[viewId]) { views[viewId].classList.remove("hidden"); }
+                    
+                    if (viewId === 'browse') fetchAvailableDonations();
+                    if (viewId === 'requests') fetchMyRequests();
+                });
+            });
+            
+             // --- LOGOUT ---
+            document.getElementById("nav-logout").addEventListener("click", async (e) => {
+                e.preventDefault();
+                await supabase.auth.signOut();
+                window.location.href = "LoginSignUp.html";
+            });
+
+            // --- INITIALIZE ---
+            initializeDashboard();
+        });
+    </script>
 </body>
 </html>
+
